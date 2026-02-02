@@ -1,0 +1,31 @@
+# Dependencies
+node_modules
+**/node_modules
+.bun/install/cache
+
+# Build Outputs
+.next
+dist
+out
+build
+*.log
+
+# Git
+.git
+.gitignore
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+**/*.pem
+**/*.key
+
+# OS Junk
+.DS_Store
+Thumbs.db
+
+# Docker-specific
+docker-compose.yaml
+docker-compose.*.yaml
+Dockerfile*

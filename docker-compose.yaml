@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:17-alpine
+    ports:
+      - "5432:5432"
+    container_name: GetYourApi_DB
+    restart: always
+    environment:
+      POSTGRES_USER: vikas7490
+      POSTGRES_PASSWORD: vikas12630
+      POSTGRES_DB: my_pg_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

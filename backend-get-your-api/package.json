@@ -9,9 +9,11 @@
     "@neondatabase/serverless": "^1.0.2",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
-    "elysia": "latest"
+    "elysia": "latest",
+    "pg": "^8.18.0"
   },
   "devDependencies": {
+    "@types/pg": "^8.16.0",
     "bun-types": "latest",
     "drizzle-kit": "^0.31.8",
     "tsx": "^4.21.0"
