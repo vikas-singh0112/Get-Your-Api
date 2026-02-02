@@ -1,9 +1,10 @@
 import "dotenv/config";
 import { app } from "./App";
-import { sql } from "./db/index";
+import {db} from "./db";
+import { sql } from "drizzle-orm";
 
 (async () => {
-	await sql`SELECT 1`;
+	await await db.execute(sql`SELECT 1`);
 	console.log("Successfully connected to Neon DB.");
 
 	app.listen(1111, () => {

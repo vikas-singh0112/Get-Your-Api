@@ -1,3 +1,4 @@
+import { SQL, sql } from "drizzle-orm";
 import {
 	integer,
 	pgTable,
@@ -13,9 +14,10 @@ import {
 // these are actual users of our website
 export const consumers = pgTable("consumers", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	firstName: varchar({ length: 255 }).notNull(),
-	lastName: integer().notNull(),
-	email: varchar({ length: 255 }).notNull().unique(),
+
+	firstName: varchar({ length: 30 }).notNull(),
+	lastName: varchar({ length: 30 }).notNull(),
+	email: varchar({ length: 30 }).notNull().unique(),
 	clerkId: varchar().notNull().unique(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
@@ -28,6 +30,9 @@ export const users = pgTable("users", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	firstName: varchar({ length: 30 }).notNull(),
 	lastName: varchar({ length: 30 }).notNull(),
+	fullName: varchar({ length: 61 }).generatedAlwaysAs(
+		(): SQL => sql`${users.firstName} || ' ' || ${users.lastName}`,
+	),
 	email: varchar({ length: 30 }).notNull().unique(),
 	phoneNumber: varchar({ length: 20 }).notNull(),
 	role: varchar({ length: 10 }).notNull(),
