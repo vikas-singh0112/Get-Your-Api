@@ -9,6 +9,7 @@ import {
 	text,
 	boolean,
 	date,
+	uuid,
 } from "drizzle-orm/pg-core";
 
 // these are actual users of our website
@@ -116,7 +117,7 @@ export const categoryEnum = pgEnum("category", [
 
 export const products = pgTable("products", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	productId: varchar({ length: 50 }).notNull().unique(),
+	productNo: varchar({ length: 50 }).notNull().unique(),
 	name: varchar({ length: 50 }).notNull(),
 	slug: varchar({ length: 50 }).notNull().unique(), // URL-friendly name (e.g., 'blue-t-shirt')
 	description: text().notNull(),
@@ -145,7 +146,7 @@ export const productsCategories = pgTable("productsCategories", {
 });
 export const clothes = pgTable("clothes", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	productId: varchar({ length: 50 }).notNull().unique(),
+	productNo: varchar({ length: 50 }).notNull().unique(),
 	name: varchar({ length: 50 }).notNull(),
 	description: text().notNull(),
 	price: numeric({ precision: 10, scale: 2 }).notNull().default("0.00"),
@@ -292,6 +293,7 @@ export const transactionTypeEnum = pgEnum("transaction_type", [
 
 export const transactions = pgTable("transactions", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	transactionNo: uuid().unique(),
 	userId: integer("user_id")
 		.references(() => users.id)
 		.notNull(),
@@ -363,7 +365,10 @@ export const actors = pgTable("actors", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	name: varchar({ length: 255 }).notNull(),
 	bio: text(),
-	birthDate: integer("birth_year").notNull(),
+	nationality: varchar({length: 50}),
+	birthDate: integer("birth_date").notNull(),
+	birthMonth: integer("birth_month").notNull(),
+	birthYear: integer("birth_year").notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -375,7 +380,9 @@ export const books = pgTable("books", {
 	title: varchar({ length: 255 }).notNull(),
 	isbn: varchar({ length: 13 }).unique().notNull(),
 	description: text().notNull(),
-	publishedDate: date("published_date").notNull(),
+	publishDate: integer("publish_date").notNull(),
+	publishMonth: integer("publish_Month").notNull(),
+	publishYear: integer("publish_year").notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -387,7 +394,15 @@ export const authors = pgTable("authors", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	name: varchar({ length: 255 }).notNull(),
 	bio: text(),
-	nationality: varchar({ length: 100 }),
+	nationality: varchar({ length: 50 }),
+	birthDate: integer("birth_date").notNull(),
+	birthMonth: integer("birth_month").notNull(),
+	birthYear: integer("birth_year").notNull(),
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at")
+		.defaultNow()
+		.$onUpdate(() => new Date())
+		.notNull(),
 });
 
 export const booksToAuthors = pgTable("books_to_authors", {

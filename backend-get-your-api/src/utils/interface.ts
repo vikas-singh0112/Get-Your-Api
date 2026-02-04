@@ -9,3 +9,39 @@ export interface ICreateUserBody {
 	country: string;
 	zipCode: string;
 }
+
+export interface ICreatePostBody {}
+export interface ICreateActorBody {
+	name: string;
+	bio: string;
+	nationality: string;
+	birthDate: number;
+	birthMonth: number;
+	birthYear: number;
+}
+export interface ICreateAuthorBody {
+	name: string;
+	bio: string;
+	nationality: string;
+	birthDate: number;
+	birthMonth: number;
+	birthYear: number;
+}
+export interface ICreateBookBody {
+	title: string;
+	isbn: string;
+	description: string;
+	publishDate: number;
+	publishMonth: number;
+	publishYear: number;
+}
+export interface ICreateClothesBody {}
+export interface ICreateEventBody {}
+export interface ICreateMessageBody {}
+export interface ICreateMovieBody {}
+export interface ICreateProductBody {}
+export interface ICreateReviewBody {}
+export interface ICreateShowBody {}
+export interface ICreateTodoBody {}
+export interface ICreateTransactionBody {}
+export interface ICreateConversationBody {}

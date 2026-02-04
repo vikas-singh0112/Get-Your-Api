@@ -3,6 +3,9 @@ import { healthRouter } from "./routes/healthRoute";
 import { userRouter } from "./routes/userRoutes";
 import { ApiError } from "./utils/ApiError";
 import { postRouter } from "./routes/postRoute";
+import { acotorRouter } from "./routes/actorRoute";
+import { authorRouter } from "./routes/authorRoute";
+import { bookRouter } from "./routes/bookRoute";
 
 const app = new Elysia();
 
@@ -26,11 +29,21 @@ app
 			success: false,
 			message: "Internal Server Error",
 			timestamp: new Date().toISOString(),
+			error,
 		};
 	});
 
 // health
 app.group("/api", (app) => app.use(healthRouter));
+
+// actor
+app.group("/api/actors", (app) => app.use(acotorRouter));
+
+// author
+app.group("/api/authors", (app) => app.use(authorRouter));
+
+// book
+app.group("/api/books", (app) => app.use(bookRouter));
 
 // users
 app.group("/api/users", (app) => app.use(userRouter));

@@ -93,7 +93,7 @@ const factory = ({
 				},
 			}),
 
-		create: async (body: ICreateUserBody, uniqueIdentifier: string) => {
+		create: async <T>(body: T, uniqueIdentifier: string) => {
 			if (unique) {
 				const existingData = await db
 					.select()
