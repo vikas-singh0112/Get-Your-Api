@@ -116,6 +116,7 @@ export const categoryEnum = pgEnum("category", [
 
 export const products = pgTable("products", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	productId: varchar({ length: 50 }).notNull().unique(),
 	name: varchar({ length: 50 }).notNull(),
 	slug: varchar({ length: 50 }).notNull().unique(), // URL-friendly name (e.g., 'blue-t-shirt')
 	description: text().notNull(),
@@ -134,6 +135,7 @@ export const products = pgTable("products", {
 
 export const productsCategories = pgTable("productsCategories", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	productCategoryId: varchar({ length: 50 }).notNull().unique(),
 	name: categoryEnum().notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
@@ -143,8 +145,8 @@ export const productsCategories = pgTable("productsCategories", {
 });
 export const clothes = pgTable("clothes", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	productId: varchar({ length: 50 }).notNull().unique(),
 	name: varchar({ length: 50 }).notNull(),
-	slug: varchar({ length: 50 }).notNull().unique(), // URL-friendly name (e.g., 'blue-t-shirt')
 	description: text().notNull(),
 	price: numeric({ precision: 10, scale: 2 }).notNull().default("0.00"),
 	category: varchar({ length: 50 }).notNull(),
