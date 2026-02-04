@@ -29,3 +29,18 @@ Thumbs.db
 docker-compose.yaml
 docker-compose.*.yaml
 Dockerfile*
+
+node_modules
+.next
+out
+.cache
+.turbo
+.git
+.gitignore
+Dockerfile
+*.log
+.env
+.env.*
+.eslintcache
+# OS junk
+.DS_Store

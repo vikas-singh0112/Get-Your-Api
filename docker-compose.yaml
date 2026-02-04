@@ -1,9 +1,8 @@
 services:
-  db:
+  get_your_api_db:
     image: postgres:17-alpine
     ports:
       - "5432:5432"
-    container_name: GetYourApi_DB
     restart: always
     environment:
       POSTGRES_USER: vikas7490
@@ -12,5 +11,24 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  get_your_api_backend:
+    build:
+      context: ./backend-get-your-api
+      dockerfile: Dockerfile
+    ports:
+      - "1111:1111"
+    environment:
+      - DATABASE_URL=postgresql://vikas7490:vikas12630@get_your_api_db/my_pg_db
+    depends_on:
+      - get_your_api_db
+
+  get_your_api_frontend:
+    build:
+      context: ./frontend-get-your-api
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - get_your_api_backend
 volumes:
   pgdata:
