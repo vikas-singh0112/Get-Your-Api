@@ -1,0 +1,43 @@
+services:
+  get_your_api_db:
+    image: postgres:17-alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: vikas7490
+      POSTGRES_PASSWORD: vikas12630
+      POSTGRES_DB: my_pg_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  get_your_api_backend:
+    image: oven/bun:alpine
+    working_dir: /app
+    ports:
+      - "1111:1111"
+    environment:
+      - DATABASE_URL=postgresql://vikas7490:vikas12630@get_your_api_db/my_pg_db
+    volumes:
+      - ./backend-get-your-api:/app
+      - backend_modules:/app/node_modules
+    command: sh -c "bun install && bun run --watch src/index.ts"
+    depends_on:
+      - get_your_api_db
+
+  get_your_api_frontend:
+    image: oven/bun:alpine
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend-get-your-api:/app
+      - frontend_modules:/app/node_modules
+    command: sh -c "bun install && bun run dev"
+    depends_on:
+      - get_your_api_backend
+
+volumes:
+  pgdata:
+  backend_modules:
+  frontend_modules:

@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
 }
 
 @theme inline {
@@ -12,10 +13,30 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Set the scrollbar colors globally */
+    scrollbar-color: #22c55e transparent; /* thumb (green-500) | track */
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px; /* Width of the vertical scrollbar */
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent; /* Makes track invisible */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #22c55e; /* Tailwind's green-500 */
+    border-radius: 100px;      /* Perfect pill shape */
+    border: 2px solid transparent; /* Creates 'padding' around the pill */
+    background-clip: content-box;  /* Ensures the 'padding' stays transparent */
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #16a34a; /* Tailwind's green-600 on hover */
   }
 }
 
@@ -24,3 +45,5 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
