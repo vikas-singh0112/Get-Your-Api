@@ -37,7 +37,7 @@ export default function Home() {
 
                 <div className=" mx-auto">
                     {/* Changed gap and grid-style feel */}
-                    <div className="flex flex-wrap lg:flex-nowrap gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                         <WhatWeOfferCard title="Free public APIs: users, posts, comments." imgSrc="/api.jpg" />
                         <WhatWeOfferCard title="Authenticated users: create, update, delete." imgSrc="/authenticate.jpg" />
                         <WhatWeOfferCard title="Persistence: data stays for 24 hours." imgSrc="/24hours.jpg" />

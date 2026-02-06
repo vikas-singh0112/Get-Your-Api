@@ -6,9 +6,11 @@ import { postRouter } from "./routes/postRoute";
 import { acotorRouter } from "./routes/actorRoute";
 import { authorRouter } from "./routes/authorRoute";
 import { bookRouter } from "./routes/bookRoute";
+import cors from "@elysiajs/cors";
 
 const app = new Elysia();
-
+ 
+app.use(cors())
 // errors/global erros
 app
 	.error({

@@ -7,6 +7,7 @@ import {
 	helpRoute,
 	searchBooks,
 } from "../controllers/bookController";
+import { date } from "drizzle-orm/pg-core";
 
 export const bookRouter = new Elysia();
 
@@ -62,12 +63,7 @@ bookRouter.post(
 			title: t.String({ minLength: 2, maxLength: 30 }),
 			description: t.String({ minLength: 2, maxLength: 30 }),
 			isbn: t.String({ maxLength: 13 }),
-			publishDate: t.Numeric({ minimum: 1, maximum: 31 }),
-			publishMonth: t.Numeric({ minimum: 1, maximum: 12 }),
-			publishYear: t.Numeric({
-				minimum: 0,
-				maximum: new Date().getFullYear(),
-			}),
+			publishDate: t.String(),
 		}),
 	},
 );

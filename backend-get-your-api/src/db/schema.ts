@@ -8,8 +8,8 @@ import {
 	pgEnum,
 	text,
 	boolean,
-	date,
 	uuid,
+	date,
 } from "drizzle-orm/pg-core";
 
 // these are actual users of our website
@@ -37,6 +37,7 @@ export const users = pgTable("users", {
 	email: varchar({ length: 30 }).notNull().unique(),
 	phoneNumber: varchar({ length: 20 }).notNull(),
 	role: varchar({ length: 10 }).notNull(),
+	birthDate: date("birth_date").notNull(),
 	address: text().notNull(),
 	city: varchar({ length: 30 }).notNull(),
 	state: varchar({ length: 30 }).notNull(),
@@ -56,7 +57,7 @@ export const continentEnum = pgEnum("continent", [
 	"Asia",
 	"Europe",
 	"North America",
-	"Oceania",
+	"Australia",
 	"South America",
 ]);
 export const countries = pgTable("countries", {
@@ -179,6 +180,7 @@ export const comments = pgTable("comments", {
 	userId: integer("user_id")
 		.references(() => users.id, { onDelete: "cascade" })
 		.notNull(),
+	content: text("content").notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -240,6 +242,7 @@ export const reviews = pgTable("reviews", {
 });
 export const todos = pgTable("todos", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	userId: integer().notNull(),
 	title: varchar({ length: 255 }).notNull(),
 	content: text().notNull(),
 	completed: boolean().default(false).notNull(),
@@ -257,6 +260,7 @@ export const eventModeEnum = pgEnum("event_mode", [
 ]);
 export const events = pgTable("events", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	userId: integer().notNull(),
 	title: varchar({ length: 50 }).notNull(),
 	mode: eventModeEnum().notNull(),
 	description: text().notNull(),
@@ -311,7 +315,7 @@ export const transactions = pgTable("transactions", {
 export const movies = pgTable("movies", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	title: varchar({ length: 255 }).notNull(),
-	releaseYear: integer("release_year").notNull(),
+	releaseYear: date("release_year").notNull(),
 	genre: varchar({ length: 100 }),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
@@ -337,7 +341,7 @@ export const movies_cast = pgTable("movies_cast", {
 export const shows = pgTable("shows", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	title: varchar({ length: 255 }).notNull(),
-	releaseYear: integer("release_year").notNull(),
+	releaseYear: date("release_year").notNull(),
 	genre: varchar({ length: 100 }),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
@@ -365,10 +369,8 @@ export const actors = pgTable("actors", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	name: varchar({ length: 255 }).notNull(),
 	bio: text(),
-	nationality: varchar({length: 50}),
-	birthDate: integer("birth_date").notNull(),
-	birthMonth: integer("birth_month").notNull(),
-	birthYear: integer("birth_year").notNull(),
+	nationality: varchar({ length: 50 }),
+	birthDate: date("birth_date").notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -380,9 +382,7 @@ export const books = pgTable("books", {
 	title: varchar({ length: 255 }).notNull(),
 	isbn: varchar({ length: 13 }).unique().notNull(),
 	description: text().notNull(),
-	publishDate: integer("publish_date").notNull(),
-	publishMonth: integer("publish_Month").notNull(),
-	publishYear: integer("publish_year").notNull(),
+	publishDate: date("publish_date").notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -395,9 +395,7 @@ export const authors = pgTable("authors", {
 	name: varchar({ length: 255 }).notNull(),
 	bio: text(),
 	nationality: varchar({ length: 50 }),
-	birthDate: integer("birth_date").notNull(),
-	birthMonth: integer("birth_month").notNull(),
-	birthYear: integer("birth_year").notNull(),
+	birthDate: date("birth_date").notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()

@@ -1,3 +1,5 @@
+import { PgDate } from "drizzle-orm/pg-core";
+
 export interface ICreateUserBody {
 	firstName: string;
 	lastName: string;
@@ -5,6 +7,7 @@ export interface ICreateUserBody {
 	phoneNumber: string;
 	role: string;
 	address: string;
+	city: string;
 	state: string;
 	country: string;
 	zipCode: string;
@@ -31,9 +34,7 @@ export interface ICreateBookBody {
 	title: string;
 	isbn: string;
 	description: string;
-	publishDate: number;
-	publishMonth: number;
-	publishYear: number;
+	publishDate: string;
 }
 export interface ICreateClothesBody {}
 export interface ICreateEventBody {}

@@ -22,5 +22,17 @@ export const searchUser = async (q: string, limit: number = 10) => {
 };
 
 export const createUser = async (body: ICreateUserBody, unique: string) => {
+	body = {
+		firstName: body.firstName.toLocaleLowerCase(),
+		lastName: body.lastName.toLocaleLowerCase(),
+		email: body.email.toLocaleLowerCase(),
+		phoneNumber: body.phoneNumber,
+		role: body.role.toLocaleLowerCase(),
+		address: body.address.toLocaleLowerCase(),
+		city: body.city.toLocaleLowerCase(),
+		state: body.state.toLocaleLowerCase(),
+		country: body.country.toLocaleLowerCase(),
+		zipCode: body.country.toLocaleLowerCase(),
+	};
 	return userService.create(body, unique);
 };

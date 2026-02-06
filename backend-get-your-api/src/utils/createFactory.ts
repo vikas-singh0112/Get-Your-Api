@@ -75,6 +75,7 @@ const factory = ({
 			queryColumn.length > 0 && {
 				search: async (q: string, limit: number) => {
 					const conditions = queryColumn.map((col) => ilike(col, `%${q}%`));
+					console.log(q)
 					const data = await db
 						.select()
 						.from(Model)

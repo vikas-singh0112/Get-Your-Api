@@ -64,6 +64,7 @@ userRouter.post(
 			phoneNumber: t.String({ minLength: 7, maxLength: 20 }),
 			role: t.String({ minLength: 4, maxLength: 10 }),
 			address: t.String({ minLength: 10 }),
+			city: t.String({minLength:2, maxLength:30}),
 			state: t.String({ minLength: 2, maxLength: 30 }),
 			country: t.String({ minLength: 4, maxLength: 30 }),
 			zipCode: t.String({ minLength: 4, maxLength: 6 }),

@@ -62,7 +62,7 @@ export const bookService = factory({
 	Model: books,
 	modelName: "books",
 	idColumn: books.id,
-	queryColumn: [books.title],
+	queryColumn: [books.title, books.isbn, books.publishDate],
 	unique: books.title
 });
 export const clothService = factory({
