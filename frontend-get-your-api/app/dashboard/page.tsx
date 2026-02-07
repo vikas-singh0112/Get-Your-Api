@@ -1,7 +1,13 @@
-const DashboardPage = () => {
-  return (
-    <div></div>
-  );
-}
+import SessionCopyBtn from "@/components/dashboard/SessionCopyBtn";
 
-export default DashboardPage
+const DashboardPage = () => {
+
+
+	return (
+		<div className="w-full  h-[calc(100vh-56px)]  flex items-center justify-center">
+		<SessionCopyBtn />
+		</div>
+	);
+};
+
+export default DashboardPage;

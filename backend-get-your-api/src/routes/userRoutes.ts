@@ -53,17 +53,20 @@ userRouter.get(
 
 userRouter.post(
 	"/create",
-	({ body }) => {
-		return createUser(body, body.email);
+	({ body,headers }) => {
+		console.log("headers here",headers)
+		const authHeader = headers.authorization || "";
+		return createUser(body, body.email, authHeader);
 	},
 	{
 		body: t.Object({
 			firstName: t.String({ minLength: 2, maxLength: 30 }),
 			lastName: t.String({ minLength: 2, maxLength: 30 }),
 			email: t.String(),
+			birthDate: t.String(),
 			phoneNumber: t.String({ minLength: 7, maxLength: 20 }),
 			role: t.String({ minLength: 4, maxLength: 10 }),
-			address: t.String({ minLength: 10 }),
+			address: t.String({ minLength: 5 }),
 			city: t.String({minLength:2, maxLength:30}),
 			state: t.String({ minLength: 2, maxLength: 30 }),
 			country: t.String({ minLength: 4, maxLength: 30 }),

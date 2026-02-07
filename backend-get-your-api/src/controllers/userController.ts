@@ -21,18 +21,19 @@ export const searchUser = async (q: string, limit: number = 10) => {
 	return userService.search(q, limit);
 };
 
-export const createUser = async (body: ICreateUserBody, unique: string) => {
+export const createUser = async (body: ICreateUserBody, unique: string, authHeader:string) => {
 	body = {
 		firstName: body.firstName.toLocaleLowerCase(),
 		lastName: body.lastName.toLocaleLowerCase(),
 		email: body.email.toLocaleLowerCase(),
+		birthDate: body.birthDate.toLocaleLowerCase(),
 		phoneNumber: body.phoneNumber,
 		role: body.role.toLocaleLowerCase(),
 		address: body.address.toLocaleLowerCase(),
 		city: body.city.toLocaleLowerCase(),
 		state: body.state.toLocaleLowerCase(),
 		country: body.country.toLocaleLowerCase(),
-		zipCode: body.country.toLocaleLowerCase(),
+		zipCode: body.zipCode.toLocaleLowerCase(),
 	};
-	return userService.create(body, unique);
+	return userService.create(body, unique, authHeader);
 };

@@ -6,6 +6,7 @@ export interface ICreateUserBody {
 	email: string;
 	phoneNumber: string;
 	role: string;
+	birthDate: string;
 	address: string;
 	city: string;
 	state: string;

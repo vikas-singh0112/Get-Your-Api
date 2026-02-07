@@ -37,15 +37,18 @@ export const users = pgTable("users", {
 	email: varchar({ length: 30 }).notNull().unique(),
 	phoneNumber: varchar({ length: 20 }).notNull(),
 	role: varchar({ length: 10 }).notNull(),
-	birthDate: date("birth_date").notNull(),
+	birthDate: date("birthDate").notNull(),
 	address: text().notNull(),
 	city: varchar({ length: 30 }).notNull(),
 	state: varchar({ length: 30 }).notNull(),
 	country: varchar({ length: 30 }).notNull(),
 	zipCode: varchar({ length: 6 }).notNull(),
 	timezone: varchar({ length: 50 }).default("UTC"),
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+	createdAt: timestamp("createdAt").defaultNow().notNull(),
+	updatedAt: timestamp("updatedAt")
 		.defaultNow()
 		.$onUpdate(() => new Date())
 		.notNull(),
@@ -67,6 +70,9 @@ export const countries = pgTable("countries", {
 	continentId: integer("continent_id")
 		.references(() => continents.id, { onDelete: "cascade" })
 		.notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -77,6 +83,9 @@ export const countries = pgTable("countries", {
 export const continents = pgTable("continents", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	name: continentEnum().notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -100,6 +109,9 @@ export const planets = pgTable("planets", {
 	name: planetEnum().notNull(),
 	distance_from_sun: varchar({ length: 50 }).notNull(),
 	no_of_moons: varchar({ length: 50 }).notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -128,6 +140,9 @@ export const products = pgTable("products", {
 		.notNull(),
 	stockQuantity: integer().default(0).notNull(),
 	imageUrl: varchar({ length: 255 }).notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -139,6 +154,9 @@ export const productsCategories = pgTable("productsCategories", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	productCategoryId: varchar({ length: 50 }).notNull().unique(),
 	name: categoryEnum().notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -154,6 +172,9 @@ export const clothes = pgTable("clothes", {
 	category: varchar({ length: 50 }).notNull(),
 	stockQuantity: integer().default(0).notNull(),
 	imageUrl: varchar({ length: 255 }).notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -166,6 +187,9 @@ export const posts = pgTable("posts", {
 	userId: integer().notNull(),
 	post_image_url: varchar({ length: 255 }).notNull(),
 	content: text().notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -181,6 +205,9 @@ export const comments = pgTable("comments", {
 		.references(() => users.id, { onDelete: "cascade" })
 		.notNull(),
 	content: text("content").notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -196,10 +223,16 @@ export const likes = pgTable("likes", {
 	postId: integer("post_id")
 		.references(() => posts.id, { onDelete: "cascade" })
 		.notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 export const conversations = pgTable("conversations", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -216,6 +249,9 @@ export const participants = pgTable("participants", {
 		.references(() => users.id, { onDelete: "cascade" })
 		.notNull(),
 	joinedAt: timestamp("joined_at").defaultNow().notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 });
 
 export const messages = pgTable("messages", {
@@ -228,12 +264,18 @@ export const messages = pgTable("messages", {
 		.notNull(),
 	content: text().notNull(),
 	isRead: boolean("is_read").default(false).notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 export const reviews = pgTable("reviews", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	stars: integer().notNull().default(0),
 	comment: text().notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -246,6 +288,9 @@ export const todos = pgTable("todos", {
 	title: varchar({ length: 255 }).notNull(),
 	content: text().notNull(),
 	completed: boolean().default(false).notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -267,6 +312,9 @@ export const events = pgTable("events", {
 	venue: text().notNull(),
 	duration: varchar({ length: 50 }).notNull(),
 	time: varchar({ length: 50 }).notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -305,6 +353,9 @@ export const transactions = pgTable("transactions", {
 	amount: numeric({ precision: 12, scale: 2 }).notNull(),
 	status: transactionStatusEnum().default("Pending").notNull(),
 	description: text().notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -317,6 +368,9 @@ export const movies = pgTable("movies", {
 	title: varchar({ length: 255 }).notNull(),
 	releaseYear: date("release_year").notNull(),
 	genre: varchar({ length: 100 }),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -332,6 +386,9 @@ export const movies_cast = pgTable("movies_cast", {
 		.references(() => movies.id, { onDelete: "cascade" })
 		.notNull(),
 	roleName: varchar("role_name", { length: 255 }),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -343,6 +400,9 @@ export const shows = pgTable("shows", {
 	title: varchar({ length: 255 }).notNull(),
 	releaseYear: date("release_year").notNull(),
 	genre: varchar({ length: 100 }),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -359,6 +419,9 @@ export const shows_cast = pgTable("shows_cast", {
 		.references(() => shows.id, { onDelete: "cascade" })
 		.notNull(),
 	roleName: varchar("role_name", { length: 255 }),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -371,6 +434,9 @@ export const actors = pgTable("actors", {
 	bio: text(),
 	nationality: varchar({ length: 50 }),
 	birthDate: date("birth_date").notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -383,6 +449,9 @@ export const books = pgTable("books", {
 	isbn: varchar({ length: 13 }).unique().notNull(),
 	description: text().notNull(),
 	publishDate: date("publish_date").notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -396,6 +465,9 @@ export const authors = pgTable("authors", {
 	bio: text(),
 	nationality: varchar({ length: 50 }),
 	birthDate: date("birth_date").notNull(),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
 	createdAt: timestamp("created_at").defaultNow().notNull(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()
@@ -413,4 +485,12 @@ export const booksToAuthors = pgTable("books_to_authors", {
 		.notNull(),
 
 	authorOrder: integer("author_order").default(1),
+	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+	developerId: text("developerId"), // Clerk ID of the developer who created it
+	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+	createdAt: timestamp("created_at").defaultNow().notNull(),
+	updatedAt: timestamp("updated_at")
+		.defaultNow()
+		.$onUpdate(() => new Date())
+		.notNull(),
 });
