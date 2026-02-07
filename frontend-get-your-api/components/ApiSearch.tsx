@@ -1,6 +1,5 @@
 import { Search } from "lucide-react";
 
-
 const ApiSearch = () => {
 	return (
 		<div className="relative w-full group mb-6">

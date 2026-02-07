@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type {Metadata} from "next";
+import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import {ClerkProvider} from "@clerk/nextjs";
 import Footer from "@/components/Footer";
 
 const geistSans = Geist({
@@ -20,21 +21,23 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
+                                     children,
+                                   }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <ClerkProvider>
+      <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased w-full flex  justify-center`}
       >
       <main className="w-full md:w-6xl min-h-screen flex flex-col items-center">
-          <Navbar />
-          {children}
-          {/*<Footer />*/}
+        <Navbar/>
+        {children}
+        {/*<Footer/>*/}
       </main>
       </body>
-    </html>
+      </html>
+    </ClerkProvider>
   );
 }

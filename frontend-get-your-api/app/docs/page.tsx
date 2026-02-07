@@ -1,8 +1,6 @@
 "use client";
 import ApiCards from "@/components/ApiCards";
 import ApiSearch from "@/components/ApiSearch";
-import CodeBox from "@/components/CodeBox";
-import CustomButton from "@/components/CustomButton";
 import { api } from "@/data/data";
 import { useState } from "react";
 
@@ -29,6 +27,8 @@ const DocsPage = () => {
 				<ul className="flex flex-col gap-1 mt-4">
 					{api.map((data, index) => {
 						const isActive = apiData.api === data.api;
+
+
 
 						return (
 							<li
