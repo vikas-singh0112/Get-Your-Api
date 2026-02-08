@@ -14,6 +14,6 @@ export const getConversationById = async (id: number) => {
     return conversationService.getById(id);
 };
 
-export const createUser = async (body: ICreateConversationBody, unique: string) => {
-    return conversationService.create(body, unique);
+export const createUser = async (body: ICreateConversationBody, unique: string, authHeader:string) => {
+    return conversationService.create(body, unique, authHeader);
 };

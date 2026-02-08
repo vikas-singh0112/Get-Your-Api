@@ -6,7 +6,8 @@ import { useState } from "react";
 
 export interface Route {
 	name: string;
-	route: string;
+	globalRoute: string;
+	privateRoute?: string;
 	usage: string;
 	method: string;
 }
@@ -75,10 +76,10 @@ const DocsPage = () => {
 					})}
 				</ul>
 			</div>
-			<div className={"w-4/5 py-4"}>
+			<div className={"w-3/5"}>
 				<div
 					className={
-						"border overflow-y-auto  border-green-500/30 shadow-[0_0_30px_-12px_rgba(34,197,94,0.3)] w-full h-full rounded-2xl bg-zinc-900/50 p-4 "
+						"border-x overflow-y-auto  border-green-500/30 shadow-[0_0_30px_-12px_rgba(34,197,94,0.3)] w-full h-full  bg-zinc-900/50 p-2"
 					}
 				>
 					<div className="w-full">
@@ -104,6 +105,7 @@ const DocsPage = () => {
 					</div>
 				</div>
 			</div>
+			<div className={"w-1/5"}></div>
 		</div>
 	);
 };

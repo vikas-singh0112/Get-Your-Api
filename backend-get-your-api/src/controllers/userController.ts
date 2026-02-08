@@ -14,11 +14,11 @@ export const getUserById = async (id: number) => {
 	return userService.getById(id);
 };
 
-export const searchUser = async (q: string, limit: number = 10) => {
+export const searchUser = async (user: string, limit: number = 10) => {
 	if (!userService.search) {
 		throw new ApiError(400, "Search not available for this service");
 	}
-	return userService.search(q, limit);
+	return userService.search(user, limit);
 };
 
 export const createUser = async (body: ICreateUserBody, unique: string, authHeader:string) => {

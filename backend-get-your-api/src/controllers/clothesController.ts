@@ -14,13 +14,13 @@ export const getClothById = async (id: number) => {
 	return clothService.getById(id);
 };
 
-export const searchClothes = async (q: string, limit: number = 10) => {
+export const searchClothes = async (cloth: string, limit: number = 10) => {
 	if (!clothService.search) {
 		throw new ApiError(400, "Search not available for this service");
 	}
-	return clothService.search(q, limit);
+	return clothService.search(cloth, limit);
 };
 
-export const createCloth = async (body: ICreateClothesBody, unique: string) => {
-	return clothService.create(body, unique);
+export const createCloth = async (body: ICreateClothesBody, unique: string, authHeader:string) => {
+	return clothService.create(body, unique, authHeader);
 };

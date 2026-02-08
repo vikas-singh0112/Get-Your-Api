@@ -40,12 +40,12 @@ userRouter.get(
 userRouter.get(
 	"/search",
 	({ query }) => {
-		const { q, limit } = query;
-		return searchUser(q, limit);
+		const { user, limit } = query;
+		return searchUser(user, limit);
 	},
 	{
 		query: t.Object({
-			q: t.String(),
+			user: t.String(),
 			limit: t.Optional(t.Numeric({ default: 10 })),
 		}),
 	},
