@@ -51,14 +51,16 @@ export const actorService = factory({
 	modelName: "actors",
 	idColumn: actors.id,
 	queryColumn: [actors.name],
-	developerId: actors.developerId
+	developerId: actors.developerId,
+	isGlobal: actors.isGlobal
 });
 export const authorService = factory({
 	Model: authors,
 	modelName: "authors",
 	idColumn: authors.id,
 	queryColumn: [authors.name],
-	developerId: authors.developerId
+	developerId: authors.developerId,
+	isGlobal: authors.isGlobal
 });
 export const bookService = factory({
 	Model: books,
@@ -66,7 +68,8 @@ export const bookService = factory({
 	idColumn: books.id,
 	queryColumn: [books.title, books.isbn, books.publishDate],
 	unique: books.title,
-	developerId: books.developerId
+	developerId: books.developerId,
+	isGlobal: books.isGlobal
 });
 export const clothService = factory({
 	Model: clothes,
@@ -74,14 +77,16 @@ export const clothService = factory({
 	idColumn: clothes.id,
 	queryColumn: [clothes.name, clothes.productNo],
 	unique: clothes.productNo,
-	developerId: clothes.developerId
+	developerId: clothes.developerId,
+	isGlobal: clothes.isGlobal
 });
 export const continentService = factory({
 	Model: continents,
 	modelName: "continents",
 	idColumn: continents.id,
 	queryColumn: [continents.name],
-	developerId: continents.developerId
+	developerId: continents.developerId,
+	isGlobal: continents.isGlobal
 });
 
 export const conversationService = factory({
@@ -89,14 +94,16 @@ export const conversationService = factory({
 	modelName: "conversations",
 	idColumn: conversations.id,
 	// leave unique for now
-	developerId: conversations.developerId
+	developerId: conversations.developerId,
+	isGlobal: conversations.isGlobal
 });
 export const countryService = factory({
 	Model: countries,
 	modelName: "countries",
 	idColumn: countries.id,
 	queryColumn: [countries.name],
-	developerId: countries.developerId
+	developerId: countries.developerId,
+	isGlobal: countries.isGlobal
 });
 export const eventService = factory({
 	Model: events,
@@ -104,7 +111,8 @@ export const eventService = factory({
 	idColumn: events.id,
 	queryColumn: [events.title],
 	unique: events.title,
-	developerId: events.developerId
+	developerId: events.developerId,
+	isGlobal: events.isGlobal
 });
 
 export const messageService = factory({
@@ -113,7 +121,8 @@ export const messageService = factory({
 	idColumn: messages.id,
 	queryColumn: [messages.senderId, messages.conversationId],
 	// leave unique for now
-	developerId: messages.developerId
+	developerId: messages.developerId,
+	isGlobal: messages.isGlobal
 });
 export const movieService = factory({
 	Model: movies,
@@ -121,21 +130,24 @@ export const movieService = factory({
 	idColumn: movies.id,
 	queryColumn: [movies.title],
 	unique: movies.title,
-	developerId: movies.developerId
+	developerId: movies.developerId,
+	isGlobal: movies.isGlobal
 });
 export const planetService = factory({
 	Model: planets,
 	modelName: "planets",
 	idColumn: planets.id,
 	queryColumn: [planets.name],
-	developerId: planets.developerId
+	developerId: planets.developerId,
+	isGlobal: planets.isGlobal
 });
 
 export const postService = factory({
 	Model: posts,
 	modelName: "posts",
 	idColumn: posts.id,
-	developerId: posts.developerId
+	developerId: posts.developerId,
+	isGlobal: posts.isGlobal
 });
 
 export const productService = factory({
@@ -144,7 +156,8 @@ export const productService = factory({
 	idColumn: products.id,
 	queryColumn: [products.name, products.productNo],
 	unique: products.productNo,
-	developerId: products.developerId
+	developerId: products.developerId,
+	isGlobal: products.isGlobal
 });
 export const showService = factory({
 	Model: shows,
@@ -152,7 +165,8 @@ export const showService = factory({
 	idColumn: shows.id,
 	queryColumn: [shows.title],
 	unique: shows.title,
-	developerId: shows.developerId
+	developerId: shows.developerId,
+	isGlobal: shows.isGlobal
 });
 export const todoService = factory({
 	Model: todos,
@@ -160,7 +174,8 @@ export const todoService = factory({
 	idColumn: todos.id,
 	queryColumn: [todos.title],
 	unique: todos.title,
-	developerId: todos.developerId
+	developerId: todos.developerId,
+	isGlobal: todos.isGlobal
 });
 
 export const transactionService = factory({
@@ -168,7 +183,8 @@ export const transactionService = factory({
 	modelName: "transactions",
 	idColumn: transactions.id,
 	unique: transactions.transactionNo,
-	developerId: transactions.developerId
+	developerId: transactions.developerId,
+	isGlobal: transactions.isGlobal
 });
 
 export const userService = factory({
@@ -177,5 +193,6 @@ export const userService = factory({
 	idColumn: users.id,
 	queryColumn: [users.fullName, users.firstName, users.lastName],
 	unique: users.email,
-	developerId: users.developerId
+	developerId: users.developerId,
+	isGlobal: users.isGlobal
 });

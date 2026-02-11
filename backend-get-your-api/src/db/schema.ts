@@ -10,6 +10,7 @@ import {
 	boolean,
 	uuid,
 	date,
+	index,
 } from "drizzle-orm/pg-core";
 
 // these are actual users of our website
@@ -27,32 +28,40 @@ export const consumers = pgTable("consumers", {
 		.notNull(),
 });
 
-export const users = pgTable("users", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	firstName: varchar({ length: 30 }).notNull(),
-	lastName: varchar({ length: 30 }).notNull(),
-	fullName: varchar({ length: 61 }).generatedAlwaysAs(
-		(): SQL => sql`${users.firstName} || ' ' || ${users.lastName}`,
-	),
-	email: varchar({ length: 30 }).notNull().unique(),
-	phoneNumber: varchar({ length: 20 }).notNull(),
-	role: varchar({ length: 10 }).notNull(),
-	birthDate: date("birthDate").notNull(),
-	address: text().notNull(),
-	city: varchar({ length: 30 }).notNull(),
-	state: varchar({ length: 30 }).notNull(),
-	country: varchar({ length: 30 }).notNull(),
-	zipCode: varchar({ length: 6 }).notNull(),
-	timezone: varchar({ length: 50 }).default("UTC"),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("createdAt").defaultNow().notNull(),
-	updatedAt: timestamp("updatedAt")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const users = pgTable(
+	"users",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		firstName: varchar({ length: 30 }).notNull(),
+		lastName: varchar({ length: 30 }).notNull(),
+		fullName: varchar({ length: 61 }).generatedAlwaysAs(
+			(): SQL => sql`${users.firstName} || ' ' || ${users.lastName}`,
+		),
+		email: varchar({ length: 30 }).notNull().unique(),
+		phoneNumber: varchar({ length: 20 }).notNull(),
+		role: varchar({ length: 10 }).notNull(),
+		birthDate: date("birthDate").notNull(),
+		address: text().notNull(),
+		city: varchar({ length: 30 }).notNull(),
+		state: varchar({ length: 30 }).notNull(),
+		country: varchar({ length: 30 }).notNull(),
+		zipCode: varchar({ length: 6 }).notNull(),
+		timezone: varchar({ length: 50 }).default("UTC"),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("createdAt").defaultNow().notNull(),
+		updatedAt: timestamp("updatedAt")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("users_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
 export const continentEnum = pgEnum("continent", [
 	"Africa",
@@ -63,35 +72,51 @@ export const continentEnum = pgEnum("continent", [
 	"Australia",
 	"South America",
 ]);
-export const countries = pgTable("countries", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	name: varchar({ length: 50 }).notNull(),
-	capital: varchar({ length: 50 }).notNull(),
-	continentId: integer("continent_id")
-		.references(() => continents.id, { onDelete: "cascade" })
-		.notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const countries = pgTable(
+	"countries",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		name: varchar({ length: 50 }).notNull(),
+		capital: varchar({ length: 50 }).notNull(),
+		continentId: integer("continent_id")
+			.references(() => continents.id, { onDelete: "cascade" })
+			.notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("countries_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
-export const continents = pgTable("continents", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	name: continentEnum().notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const continents = pgTable(
+	"continents",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		name: continentEnum().notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("continents_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
 export const planetEnum = pgEnum("planet", [
 	"Mercury",
@@ -104,20 +129,28 @@ export const planetEnum = pgEnum("planet", [
 	"Neptune",
 ]);
 
-export const planets = pgTable("planets", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	name: planetEnum().notNull(),
-	distance_from_sun: varchar({ length: 50 }).notNull(),
-	no_of_moons: varchar({ length: 50 }).notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const planets = pgTable(
+	"planets",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		name: planetEnum().notNull(),
+		distance_from_sun: varchar({ length: 50 }).notNull(),
+		no_of_moons: varchar({ length: 50 }).notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("planets_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
 export const categoryEnum = pgEnum("category", [
 	"Electronics",
@@ -128,199 +161,301 @@ export const categoryEnum = pgEnum("category", [
 	"Sports",
 ]);
 
-export const products = pgTable("products", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	productNo: varchar({ length: 50 }).notNull().unique(),
-	name: varchar({ length: 50 }).notNull(),
-	slug: varchar({ length: 50 }).notNull().unique(), // URL-friendly name (e.g., 'blue-t-shirt')
-	description: text().notNull(),
-	price: numeric({ precision: 10, scale: 2 }).notNull().default("0.00"),
-	categoryId: integer("category_id")
-		.references(() => productsCategories.id, { onDelete: "cascade" })
-		.notNull(),
-	stockQuantity: integer().default(0).notNull(),
-	imageUrl: varchar({ length: 255 }).notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const products = pgTable(
+	"products",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		productNo: varchar({ length: 50 }).notNull().unique(),
+		name: varchar({ length: 50 }).notNull(),
+		slug: varchar({ length: 50 }).notNull().unique(), // URL-friendly name (e.g., 'blue-t-shirt')
+		description: text().notNull(),
+		price: numeric({ precision: 10, scale: 2 }).notNull().default("0.00"),
+		categoryId: integer("category_id")
+			.references(() => productsCategories.id, { onDelete: "cascade" })
+			.notNull(),
+		stockQuantity: integer().default(0).notNull(),
+		imageUrl: varchar({ length: 255 }).notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("products_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
-export const productsCategories = pgTable("productsCategories", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	productCategoryId: varchar({ length: 50 }).notNull().unique(),
-	name: categoryEnum().notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
-export const clothes = pgTable("clothes", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	productNo: varchar({ length: 50 }).notNull().unique(),
-	name: varchar({ length: 50 }).notNull(),
-	description: text().notNull(),
-	price: numeric({ precision: 10, scale: 2 }).notNull().default("0.00"),
-	category: varchar({ length: 50 }).notNull(),
-	stockQuantity: integer().default(0).notNull(),
-	imageUrl: varchar({ length: 255 }).notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const productsCategories = pgTable(
+	"productsCategories",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		productCategoryId: varchar({ length: 50 }).notNull().unique(),
+		name: categoryEnum().notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("product_categories_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
+export const clothes = pgTable(
+	"clothes",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		productNo: varchar({ length: 50 }).notNull().unique(),
+		name: varchar({ length: 50 }).notNull(),
+		description: text().notNull(),
+		price: numeric({ precision: 10, scale: 2 }).notNull().default("0.00"),
+		category: varchar({ length: 50 }).notNull(),
+		stockQuantity: integer().default(0).notNull(),
+		imageUrl: varchar({ length: 255 }).notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("clothes_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
-export const posts = pgTable("posts", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	userId: integer().notNull(),
-	post_image_url: varchar({ length: 255 }).notNull(),
-	content: text().notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
-export const comments = pgTable("comments", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	postId: integer("post_id")
-		.references(() => posts.id, { onDelete: "cascade" })
-		.notNull(),
-	userId: integer("user_id")
-		.references(() => users.id, { onDelete: "cascade" })
-		.notNull(),
-	content: text("content").notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const posts = pgTable(
+	"posts",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		userId: integer()
+			.references(() => users.id, { onDelete: "cascade" })
+			.notNull(),
+		post_image_url: varchar({ length: 255 }).notNull(),
+		content: text().notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("posts_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
+export const comments = pgTable(
+	"comments",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		postId: integer("post_id")
+			.references(() => posts.id, { onDelete: "cascade" })
+			.notNull(),
+		userId: integer("user_id")
+			.references(() => users.id, { onDelete: "cascade" })
+			.notNull(),
+		content: text("content").notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("comments_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
-export const likes = pgTable("likes", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	userId: integer("user_id")
-		.references(() => users.id, { onDelete: "cascade" })
-		.notNull(),
-	postId: integer("post_id")
-		.references(() => posts.id, { onDelete: "cascade" })
-		.notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-export const conversations = pgTable("conversations", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const likes = pgTable(
+	"likes",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		userId: integer("user_id")
+			.references(() => users.id, { onDelete: "cascade" })
+			.notNull(),
+		postId: integer("post_id")
+			.references(() => posts.id, { onDelete: "cascade" })
+			.notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("likes_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
+export const conversations = pgTable(
+	"conversations",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("conversations_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
-export const participants = pgTable("participants", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	conversationId: integer("conversation_id")
-		.references(() => conversations.id, { onDelete: "cascade" })
-		.notNull(),
-	userId: integer("user_id")
-		.references(() => users.id, { onDelete: "cascade" })
-		.notNull(),
-	joinedAt: timestamp("joined_at").defaultNow().notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-});
+export const participants = pgTable(
+	"participants",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		conversationId: integer("conversation_id")
+			.references(() => conversations.id, { onDelete: "cascade" })
+			.notNull(),
+		userId: integer("user_id")
+			.references(() => users.id, { onDelete: "cascade" })
+			.notNull(),
+		joinedAt: timestamp("joined_at").defaultNow().notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("participants_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
-export const messages = pgTable("messages", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	conversationId: integer("conversation_id")
-		.references(() => conversations.id, { onDelete: "cascade" })
-		.notNull(),
-	senderId: integer("sender_id")
-		.references(() => users.id, { onDelete: "cascade" })
-		.notNull(),
-	content: text().notNull(),
-	isRead: boolean("is_read").default(false).notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-});
-export const reviews = pgTable("reviews", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	stars: integer().notNull().default(0),
-	comment: text().notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
-export const todos = pgTable("todos", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	userId: integer().notNull(),
-	title: varchar({ length: 255 }).notNull(),
-	content: text().notNull(),
-	completed: boolean().default(false).notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const messages = pgTable(
+	"messages",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		conversationId: integer("conversation_id")
+			.references(() => conversations.id, { onDelete: "cascade" })
+			.notNull(),
+		senderId: integer("sender_id")
+			.references(() => users.id, { onDelete: "cascade" })
+			.notNull(),
+		content: text().notNull(),
+		isRead: boolean("is_read").default(false).notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("messages_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
+export const reviews = pgTable(
+	"reviews",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		stars: integer().notNull().default(0),
+		comment: text().notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("reviews_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
+export const todos = pgTable(
+	"todos",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		userId: integer()
+			.references(() => users.id, { onDelete: "cascade" })
+			.notNull(),
+		title: varchar({ length: 255 }).notNull(),
+		content: text().notNull(),
+		completed: boolean().default(false).notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("todos_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
 export const eventModeEnum = pgEnum("event_mode", [
 	"In-Person",
 	"Virtual",
 	"Hybrid",
 ]);
-export const events = pgTable("events", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	userId: integer().notNull(),
-	title: varchar({ length: 50 }).notNull(),
-	mode: eventModeEnum().notNull(),
-	description: text().notNull(),
-	venue: text().notNull(),
-	duration: varchar({ length: 50 }).notNull(),
-	time: varchar({ length: 50 }).notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const events = pgTable(
+	"events",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		userId: integer()
+			.references(() => users.id, { onDelete: "cascade" })
+			.notNull(),
+		title: varchar({ length: 50 }).notNull(),
+		mode: eventModeEnum().notNull(),
+		description: text().notNull(),
+		venue: text().notNull(),
+		duration: varchar({ length: 50 }).notNull(),
+		time: varchar({ length: 50 }).notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("events_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
 export const transactionStatusEnum = pgEnum("transaction_status", [
 	"Pending",
@@ -343,154 +478,228 @@ export const transactionTypeEnum = pgEnum("transaction_type", [
 	"Transfer", // Moving money between accounts (optional but useful)
 ]);
 
-export const transactions = pgTable("transactions", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	transactionNo: uuid().unique(),
-	userId: integer("user_id")
-		.references(() => users.id)
-		.notNull(),
-	type: transactionTypeEnum().notNull(),
-	amount: numeric({ precision: 12, scale: 2 }).notNull(),
-	status: transactionStatusEnum().default("Pending").notNull(),
-	description: text().notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const transactions = pgTable(
+	"transactions",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		transactionNo: uuid().unique(),
+		userId: integer("user_id")
+			.references(() => users.id)
+			.notNull(),
+		type: transactionTypeEnum().notNull(),
+		amount: numeric({ precision: 12, scale: 2 }).notNull(),
+		status: transactionStatusEnum().default("Pending").notNull(),
+		description: text().notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("transactions_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
-export const movies = pgTable("movies", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	title: varchar({ length: 255 }).notNull(),
-	releaseYear: date("release_year").notNull(),
-	genre: varchar({ length: 100 }),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
-export const movies_cast = pgTable("movies_cast", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	actorId: integer("actor_id")
-		.references(() => actors.id, { onDelete: "cascade" })
-		.notNull(),
-	movieId: integer("movie_id")
-		.references(() => movies.id, { onDelete: "cascade" })
-		.notNull(),
-	roleName: varchar("role_name", { length: 255 }),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
-export const shows = pgTable("shows", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	title: varchar({ length: 255 }).notNull(),
-	releaseYear: date("release_year").notNull(),
-	genre: varchar({ length: 100 }),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const movies = pgTable(
+	"movies",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		title: varchar({ length: 255 }).notNull(),
+		releaseYear: date("release_year").notNull(),
+		genre: varchar({ length: 100 }),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("movies_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
+export const movies_cast = pgTable(
+	"movies_cast",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		actorId: integer("actor_id")
+			.references(() => actors.id, { onDelete: "cascade" })
+			.notNull(),
+		movieId: integer("movie_id")
+			.references(() => movies.id, { onDelete: "cascade" })
+			.notNull(),
+		roleName: varchar("role_name", { length: 255 }),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("movies_cast_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
+export const shows = pgTable(
+	"shows",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		title: varchar({ length: 255 }).notNull(),
+		releaseYear: date("release_year").notNull(),
+		genre: varchar({ length: 100 }),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("shows_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
-export const shows_cast = pgTable("shows_cast", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	actorId: integer("actor_id")
-		.references(() => actors.id, { onDelete: "cascade" })
-		.notNull(),
-	showId: integer("show_id")
-		.references(() => shows.id, { onDelete: "cascade" })
-		.notNull(),
-	roleName: varchar("role_name", { length: 255 }),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
-export const actors = pgTable("actors", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	name: varchar({ length: 255 }).notNull(),
-	bio: text(),
-	nationality: varchar({ length: 50 }),
-	birthDate: date("birth_date").notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
-export const books = pgTable("books", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	title: varchar({ length: 255 }).notNull(),
-	isbn: varchar({ length: 13 }).unique().notNull(),
-	description: text().notNull(),
-	publishDate: date("publish_date").notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const shows_cast = pgTable(
+	"shows_cast",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		actorId: integer("actor_id")
+			.references(() => actors.id, { onDelete: "cascade" })
+			.notNull(),
+		showId: integer("show_id")
+			.references(() => shows.id, { onDelete: "cascade" })
+			.notNull(),
+		roleName: varchar("role_name", { length: 255 }),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("shows_cast_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
+export const actors = pgTable(
+	"actors",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		name: varchar({ length: 255 }).notNull(),
+		bio: text(),
+		nationality: varchar({ length: 50 }),
+		birthDate: date("birth_date").notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("actors_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
+export const books = pgTable(
+	"books",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		title: varchar({ length: 255 }).notNull(),
+		isbn: varchar({ length: 13 }).unique().notNull(),
+		description: text().notNull(),
+		publishDate: date("publish_date").notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("books_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
-export const authors = pgTable("authors", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	name: varchar({ length: 255 }).notNull(),
-	bio: text(),
-	nationality: varchar({ length: 50 }),
-	birthDate: date("birth_date").notNull(),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+export const authors = pgTable(
+	"authors",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		name: varchar({ length: 255 }).notNull(),
+		bio: text(),
+		nationality: varchar({ length: 50 }),
+		birthDate: date("birth_date").notNull(),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("authors_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
 
-export const booksToAuthors = pgTable("books_to_authors", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	bookId: integer("book_id")
-		.references(() => books.id, { onDelete: "cascade" })
-		.notNull(),
-	authorId: integer("author_id")
-		.references(() => authors.id, { onDelete: "cascade" })
-		.notNull(),
+export const booksToAuthors = pgTable(
+	"books_to_authors",
+	{
+		id: integer().primaryKey().generatedAlwaysAsIdentity(),
+		bookId: integer("book_id")
+			.references(() => books.id, { onDelete: "cascade" })
+			.notNull(),
+		authorId: integer("author_id")
+			.references(() => authors.id, { onDelete: "cascade" })
+			.notNull(),
 
-	authorOrder: integer("author_order").default(1),
-	isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
-	developerId: text("developerId"), // Clerk ID of the developer who created it
-	expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
-	createdAt: timestamp("created_at").defaultNow().notNull(),
-	updatedAt: timestamp("updated_at")
-		.defaultNow()
-		.$onUpdate(() => new Date())
-		.notNull(),
-});
+		authorOrder: integer("author_order").default(1),
+		isGlobal: boolean("isGlobal").default(true).notNull(), // true = Part of the 300+ shared records
+		developerId: text("developerId"), // Clerk ID of the developer who created it
+		expiresAt: timestamp("expiresAt"), // Null for global, 24h for private
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.$onUpdate(() => new Date())
+			.notNull(),
+	},
+	(table) => {
+		return {
+			expiresAtIndex: index("booksToAuthors_expires_at_idx").on(table.expiresAt),
+		};
+	},
+);
+
+

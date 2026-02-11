@@ -14,6 +14,7 @@ type Props = {
 	unique?: PgColumn;
 	modelName: string;
 	developerId: PgColumn;
+	isGlobal: PgColumn;
 };
 
 const factory = ({
@@ -23,6 +24,7 @@ const factory = ({
 	queryColumn,
 	unique,
 	developerId,
+	isGlobal,
 }: Props) => {
 	return {
 		help: async () => {
@@ -46,8 +48,32 @@ const factory = ({
 			return response;
 		},
 
-		getAll: async (limit: number) => {
-			const data = await db.select().from(Model).limit(limit);
+		getAll: async (limit: number, scope: string, authHeader: string) => {
+			let data;
+			if (scope === "me") {
+				if (!authHeader || !authHeader.startsWith("Bearer ")) {
+					throw new ApiError(401, "Authentication required for private scope");
+				}
+
+				try {
+					const token = authHeader.replace("Bearer ", "");
+					const { sub: userId } = await verifyToken(token, {
+						secretKey: process.env.CLERK_SECRET_KEY,
+					});
+
+					// Fetch only records belonging to this developer
+					data = await db
+						.select()
+						.from(Model)
+						.where(eq(developerId, userId))
+						.limit(limit);
+				} catch (error) {
+					throw new ApiError(401, "Invalid token for private scope");
+				}
+			} else {
+				data = await db.select().from(Model).limit(limit);
+			}
+
 			if (!data || data.length === 0) {
 				throw new ApiError(404, `${modelName}  not found`);
 			}
@@ -63,8 +89,31 @@ const factory = ({
 			return response;
 		},
 
-		getById: async (id: number) => {
-			const data = await db.select().from(Model).where(eq(idColumn, id));
+		getById: async (id: number, scope: string, authHeader: string) => {
+			let data;
+			if (scope === "me") {
+				if (!authHeader || !authHeader.startsWith("Bearer ")) {
+					throw new ApiError(401, "Authentication required for private scope");
+				}
+				try {
+					const token = authHeader.replace("Bearer ", "");
+					const { sub: userId } = await verifyToken(token, {
+						secretKey: process.env.CLERK_SECRET_KEY,
+					});
+
+					data = await db
+						.select()
+						.from(Model)
+						.where(and(eq(developerId, userId), eq(idColumn, id)));
+				} catch (error) {
+					throw new ApiError(401, "Invalid token for private scope");
+				}
+			} else {
+				data = await db
+					.select()
+					.from(Model)
+					.where(and(eq(isGlobal, true), eq(idColumn, id)));
+			}
 			if (!data || data.length === 0) {
 				throw new ApiError(404, `${id} not found`);
 			}
@@ -83,14 +132,43 @@ const factory = ({
 		// search
 		...(queryColumn &&
 			queryColumn.length > 0 && {
-				search: async (q: string, limit: number) => {
+				search: async (
+					q: string,
+					limit: number,
+					scope: string,
+					authHeader: string,
+				) => {
 					const conditions = queryColumn.map((col) => ilike(col, `%${q}%`));
-					console.log(q);
-					const data = await db
-						.select()
-						.from(Model)
-						.limit(limit)
-						.where(or(...conditions));
+					// console.log(q);
+					let data;
+					if (scope === "me") {
+						if (!authHeader || !authHeader.startsWith("Bearer ")) {
+							throw new ApiError(
+								401,
+								"Authentication required for private scope",
+							);
+						}
+						try {
+							const token = authHeader.replace("Bearer ", "");
+							const { sub: userId } = await verifyToken(token, {
+								secretKey: process.env.CLERK_SECRET_KEY,
+							});
+
+							data = await db
+								.select()
+								.from(Model)
+								.where(and(eq(developerId, userId), or(...conditions)));
+						} catch (error) {
+							throw new ApiError(401, "Invalid token for private scope");
+						}
+					} else {
+						data = await db
+							.select()
+							.from(Model)
+							.limit(limit)
+							.where(and(eq(isGlobal, true), or(...conditions)));
+					}
+
 					console.log(data);
 					if (!data || data.length === 0) {
 						throw new ApiError(404, `${q}  not found`);

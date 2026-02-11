@@ -1,7 +1,7 @@
 interface CodeBoxProps {
 	data: {
 		name: string;
-		privateRoute: string;
+		privateRoute?: string;
 		globalRoute: string;
 	};
 	route: string;

@@ -13,40 +13,47 @@ userRouter.get("/help", () => helpRoute());
 
 userRouter.get(
 	"/",
-	({ query }) => {
-		const { limit } = query;
-		return getAllUsers(limit);
+	({ query, headers }) => {
+		const { limit, scope } = query;
+		const authHeader = headers.authorization || "";
+		return getAllUsers(limit, scope, authHeader);
 	},
 	{
 		query: t.Object({
 			limit: t.Optional(t.Numeric({ default: 50 })),
+			scope: t.Optional(t.String())
 		}),
 	},
 );
 
 userRouter.get(
 	"/:id",
-	({ params }) => {
+	({ params, headers, query }) => {
 		const { id } = params;
-		return getUserById(id);
+		const {scope} = query
+		const authHeader = headers.authorization || "";
+		return getUserById(id, scope,authHeader);
 	},
 	{
 		params: t.Object({
 			id: t.Numeric(),
+			scope: t.Optional(t.String())
 		}),
 	},
 );
 
 userRouter.get(
 	"/search",
-	({ query }) => {
-		const { user, limit } = query;
-		return searchUser(user, limit);
+	({ query, headers }) => {
+		const { user, limit, scope } = query;
+		const authHeader = headers.authorization || "";
+		return searchUser(user, limit,scope, authHeader);
 	},
 	{
 		query: t.Object({
 			user: t.String(),
 			limit: t.Optional(t.Numeric({ default: 10 })),
+			scope: t.Optional(t.String())
 		}),
 	},
 );
@@ -54,7 +61,6 @@ userRouter.get(
 userRouter.post(
 	"/create",
 	({ body,headers }) => {
-		console.log("headers here",headers)
 		const authHeader = headers.authorization || "";
 		return createUser(body, body.email, authHeader);
 	},

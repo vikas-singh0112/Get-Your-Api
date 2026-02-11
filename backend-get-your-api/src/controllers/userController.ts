@@ -6,19 +6,19 @@ export const helpRoute = async () => {
 	return userService.help();
 };
 
-export const getAllUsers = async (limit: number = 50) => {
-	return userService.getAll(limit);
+export const getAllUsers = async (limit: number = 50, scope:string = "global", authHeader:string) => {
+	return userService.getAll(limit, scope, authHeader);
 };
 
-export const getUserById = async (id: number) => {
-	return userService.getById(id);
+export const getUserById = async (id: number, scope:string = "global",authHeader: string) => {
+	return userService.getById(id,scope, authHeader);
 };
 
-export const searchUser = async (user: string, limit: number = 10) => {
+export const searchUser = async (user: string, limit: number = 10,scope: string = "global", authHeader:string) => {
 	if (!userService.search) {
 		throw new ApiError(400, "Search not available for this service");
 	}
-	return userService.search(user, limit);
+	return userService.search(user, limit,scope, authHeader);
 };
 
 export const createUser = async (body: ICreateUserBody, unique: string, authHeader:string) => {
