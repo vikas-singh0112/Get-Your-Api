@@ -11,7 +11,7 @@ type Props = {
 	Model: PgTable;
 	idColumn: PgColumn;
 	queryColumn?: PgColumn[];
-	unique?: PgColumn;
+	// unique?: PgColumn;
 	modelName: string;
 	developerId: PgColumn;
 	isGlobal: PgColumn;
@@ -22,7 +22,7 @@ const factory = ({
 	modelName,
 	idColumn,
 	queryColumn,
-	unique,
+	// unique,
 	developerId,
 	isGlobal,
 }: Props) => {
@@ -71,7 +71,7 @@ const factory = ({
 					throw new ApiError(401, "Invalid token for private scope");
 				}
 			} else {
-				data = await db.select().from(Model).limit(limit);
+				data = await db.select().from(Model).where(eq(isGlobal, true)).limit(limit);
 			}
 
 			if (!data || data.length === 0) {
@@ -169,7 +169,7 @@ const factory = ({
 							.where(and(eq(isGlobal, true), or(...conditions)));
 					}
 
-					console.log(data);
+					// console.log(data);
 					if (!data || data.length === 0) {
 						throw new ApiError(404, `${q}  not found`);
 					}
@@ -186,81 +186,81 @@ const factory = ({
 				},
 			}),
 
-		create: async <T>(
-			body: T,
-			uniqueIdentifier: string,
-			authHeader: string,
-		) => {
-			if (unique) {
-				const existingData = await db
-					.select()
-					.from(Model)
-					.where(eq(unique, uniqueIdentifier))
-					.limit(1);
+		// create: async <T>(
+		// 	body: T,
+		// 	uniqueIdentifier: string | null,
+		// 	authHeader: string,
+		// ) => {
+		// 	if (unique) {
+		// 		const existingData = await db
+		// 			.select()
+		// 			.from(Model)
+		// 			.where(eq(unique, uniqueIdentifier))
+		// 			.limit(1);
 
-				if (existingData.length > 0) {
-					throw new ApiError(
-						400,
-						`${unique.name} ${uniqueIdentifier} already exists`,
-					);
-				}
-			}
-			let authFailError;
-			if (authHeader && authHeader.startsWith("Bearer ")) {
-				try {
-					const token = authHeader.replace("Bearer ", "");
-					const { sub: userId } = await verifyToken(token, {
-						secretKey: process.env.CLERK_SECRET_KEY,
-					});
+		// 		if (existingData.length > 0) {
+		// 			throw new ApiError(
+		// 				400,
+		// 				`${unique.name} ${uniqueIdentifier} already exists`,
+		// 			);
+		// 		}
+		// 	}
+		// 	let authFailError;
+		// 	if (authHeader && authHeader.startsWith("Bearer ")) {
+		// 		try {
+		// 			const token = authHeader.replace("Bearer ", "");
+		// 			const { sub: userId } = await verifyToken(token, {
+		// 				secretKey: process.env.CLERK_SECRET_KEY,
+		// 			});
 
-					const alreadyCreated = await db
-						.select()
-						.from(Model)
-						.where(and(eq(developerId, userId)));
+		// 			const alreadyCreated = await db
+		// 				.select()
+		// 				.from(Model)
+		// 				.where(and(eq(developerId, userId)));
 
-					if (alreadyCreated.length >= 10) {
-						throw new ApiError(400, `already create 10 ${Model}`);
-					}
-					const createDataArray = await db
-						.insert(Model)
-						.values({
-							...body,
-							developerId: userId,
-							isGlobal: false,
-							expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-						})
-						.returning();
-					const createData = createDataArray[0];
+		// 			if (alreadyCreated.length >= 10) {
+		// 				throw new ApiError(400, `already create 10 ${Model}`);
+		// 			}
+		// 			const createDataArray = await db
+		// 				.insert(Model)
+		// 				.values({
+		// 					...body,
+		// 					developerId: userId,
+		// 					isGlobal: false,
+		// 					expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+		// 				})
+		// 				.returning();
+		// 			const createData = createDataArray[0];
 
-					if (!createData) {
-						throw new ApiError(500, "unable to create");
-					}
-					const devId = developerId.name;
-					const { [devId]: _, isGlobal, expiresAt, ...safeData } = createData;
+		// 			if (!createData) {
+		// 				throw new ApiError(500, "unable to create");
+		// 			}
+		// 			const devId = developerId.name;
+		// 			const { [devId]: _, isGlobal, expiresAt, ...safeData } = createData;
 
-					const response = ApiResponse({
-						data: safeData,
-						message: `${modelName.slice(0, -1)} created successfully`,
-						statusCode: 201,
-					});
-					return response;
-				} catch (error) {
-					console.error("Auth failed, falling back to mock mode");
-					authFailError = "Auth failed, falling back to mock mode";
-				}
-			}
-			// if auth failed fake data
-			const createData = body;
-			if (!createData) {
-				return new ApiError(500, `unable to create ${modelName.slice(0, -1)}`);
-			}
-			const response = ApiResponse({
-				data: createData,
-				message: `${authHeader && authFailError} -- ${modelName.slice(0, -1)} created successfully`,
-				statusCode: 201,
-			});
-			return response;
-		},
+		// 			const response = ApiResponse({
+		// 				data: safeData,
+		// 				message: `${modelName.slice(0, -1)} created successfully`,
+		// 				statusCode: 201,
+		// 			});
+		// 			return response;
+		// 		} catch (error) {
+		// 			console.error("Auth failed, falling back to mock mode");
+		// 			authFailError = "Auth failed, falling back to mock mode";
+		// 		}
+		// 	}
+		// 	// if auth failed fake data
+		// 	const createData = body;
+		// 	if (!createData) {
+		// 		return new ApiError(500, `unable to create ${modelName.slice(0, -1)}`);
+		// 	}
+		// 	const response = ApiResponse({
+		// 		data: createData,
+		// 		message: `${authHeader && authFailError} -- ${modelName.slice(0, -1)} created successfully`,
+		// 		statusCode: 201,
+		// 	});
+		// 	return response;
+		// },
 	};
 };
 

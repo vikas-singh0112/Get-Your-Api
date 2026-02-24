@@ -154,7 +154,7 @@ const ApiCards = ({
 				</div>
 			</div>
 			{isCodeOpen && (
-				<CodeBox data={data} apiData={apiData} route={selectedRoute} />
+				<CodeBox data={data} apiData={apiData} route={selectedRoute} method={data.method}/>
 			)}
 		</div>
 	);

@@ -22,7 +22,7 @@ app.use(
 		},
 	}),
 );
-// cleanDatabase();
+cleanDatabase();
 
 // errors/global erros
 app

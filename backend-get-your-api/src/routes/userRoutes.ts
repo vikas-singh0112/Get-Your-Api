@@ -20,7 +20,7 @@ userRouter.get(
 	},
 	{
 		query: t.Object({
-			limit: t.Optional(t.Numeric({ default: 50 })),
+			limit: t.Optional(t.Numeric({ default: 20 })),
 			scope: t.Optional(t.String())
 		}),
 	},
@@ -62,7 +62,7 @@ userRouter.post(
 	"/create",
 	({ body,headers }) => {
 		const authHeader = headers.authorization || "";
-		return createUser(body, body.email, authHeader);
+		return createUser(body, authHeader);
 	},
 	{
 		body: t.Object({

@@ -19,32 +19,6 @@ import {
 } from "../db/schema";
 import factory from "../utils/createFactory";
 
-/* 
-done tasks {
-	actors,
-	authors,
-	books,
-	clothes,
-	continents,
-	conversations,
-	countries,
-	events,
-	messages,
-	movies,
-	planets,
-	posts,
-	products,
-	shows,
-	todos,
-	transactions,
-	users,
-	}
-
-remaining task {
-	conversation message booktoauthor participants
-	}
-
-*/
 
 export const actorService = factory({
 	Model: actors,
@@ -67,7 +41,7 @@ export const bookService = factory({
 	modelName: "books",
 	idColumn: books.id,
 	queryColumn: [books.title, books.isbn, books.publishDate],
-	unique: books.title,
+	// unique: books.title,
 	developerId: books.developerId,
 	isGlobal: books.isGlobal
 });
@@ -76,7 +50,7 @@ export const clothService = factory({
 	modelName: "clothes",
 	idColumn: clothes.id,
 	queryColumn: [clothes.name, clothes.productNo],
-	unique: clothes.productNo,
+	// unique: clothes.productNo,
 	developerId: clothes.developerId,
 	isGlobal: clothes.isGlobal
 });
@@ -110,7 +84,7 @@ export const eventService = factory({
 	modelName: "events",
 	idColumn: events.id,
 	queryColumn: [events.title],
-	unique: events.title,
+	// unique: events.title,
 	developerId: events.developerId,
 	isGlobal: events.isGlobal
 });
@@ -129,7 +103,7 @@ export const movieService = factory({
 	modelName: "movies",
 	idColumn: movies.id,
 	queryColumn: [movies.title],
-	unique: movies.title,
+	// unique: movies.title,
 	developerId: movies.developerId,
 	isGlobal: movies.isGlobal
 });
@@ -155,7 +129,7 @@ export const productService = factory({
 	modelName: "products",
 	idColumn: products.id,
 	queryColumn: [products.name, products.productNo],
-	unique: products.productNo,
+	// unique: products.productNo,
 	developerId: products.developerId,
 	isGlobal: products.isGlobal
 });
@@ -164,7 +138,7 @@ export const showService = factory({
 	modelName: "shows",
 	idColumn: shows.id,
 	queryColumn: [shows.title],
-	unique: shows.title,
+	// unique: shows.title,
 	developerId: shows.developerId,
 	isGlobal: shows.isGlobal
 });
@@ -173,7 +147,7 @@ export const todoService = factory({
 	modelName: "todos",
 	idColumn: todos.id,
 	queryColumn: [todos.title],
-	unique: todos.title,
+	// unique: todos.title,
 	developerId: todos.developerId,
 	isGlobal: todos.isGlobal
 });
@@ -182,7 +156,7 @@ export const transactionService = factory({
 	Model: transactions,
 	modelName: "transactions",
 	idColumn: transactions.id,
-	unique: transactions.transactionNo,
+	// unique: transactions.transactionNo,
 	developerId: transactions.developerId,
 	isGlobal: transactions.isGlobal
 });
@@ -192,7 +166,7 @@ export const userService = factory({
 	modelName: "users",
 	idColumn: users.id,
 	queryColumn: [users.fullName, users.firstName, users.lastName],
-	unique: users.email,
+	// unique: users.email,
 	developerId: users.developerId,
 	isGlobal: users.isGlobal
 });

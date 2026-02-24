@@ -14,7 +14,11 @@ export interface ICreateUserBody {
 	zipCode: string;
 }
 
-export interface ICreatePostBody {}
+export interface ICreatePostBody {
+	userId: number;
+	post_image_url: string;
+	content: string;
+}
 export interface ICreateActorBody {
 	name: string;
 	bio: string;

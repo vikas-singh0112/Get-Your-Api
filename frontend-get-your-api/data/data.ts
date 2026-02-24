@@ -66,54 +66,52 @@ export const api = [
 			zipCode: "90028",
 		},
 	},
-	// posts
-	// 	{
-	// 	api: "posts",
-	// 	routes: [
-	// 		{
-	// 			name: "help",
-	// 			route: "/posts/help",
-	// 			method: "GET",
-	// 			usage: "shows all the end points",
-	// 		},
-	// 		{
-	// 			name: "get all posts",
-	// 			route: "/posts",
-	// 			method: "GET",
-	// 			usage: "Returns all posts, default limit of 50 posts ",
-	// 		},
-	// 		{
-	// 			name: "get all posts with limit",
-	// 			route: "/posts?limit=10",
-	// 			method: "GET",
-	// 			usage: "Returns all posts, set limit manually",
-	// 		},
-	// 		{
-	// 			name: "get posts by id",
-	// 			route: "/posts/:id",
-	// 			method: "GET",
-	// 			usage: "Returns a single post or post not found",
-	// 		},
-	// 		{
-	// 			name: "create post",
-	// 			route: "/posts/create",
-	// 			method: "POST",
-	// 			usage: "create post, for persisted creation signin",
-	// 		},
-	// 	],
-	// 	data: {
-	// 		firstName: "john",
-	// 		lastName: "doe",
-	// 		email: "johndoe@gmail.com",
-	// 		phoneNumber: "1234567890",
-	// 		role: "post",
-	// 		address: "TCL Chinese Theatre, 6925 Hollywood Blvd",
-	// 		city: "Hollywood",
-	// 		state: "CA",
-	// 		country: "USA",
-	// 		zipCode: "90028",
-	// 	},
-	// },
+
+	{
+		api: "posts",
+		routes: [
+			{
+				name: "help",
+				globalRoute: "/posts/help",
+				privateRoute: "/posts/help?scope=me",
+				method: "GET",
+				usage: "shows all the end points",
+			},
+			{
+				name: "get all posts",
+				globalRoute: "/posts",
+				privateRoute: "/posts?scope=me",
+				method: "GET",
+				usage: "Returns all posts, default limit of 20 posts ",
+			},
+			{
+				name: "get all posts with limit",
+				globalRoute: "/posts?limit=10",
+				privateRoute: "/posts?limit=10&scope=me",
+				method: "GET",
+				usage: "Returns all posts, set limit manually",
+			},
+			{
+				name: "get posts by id",
+				globalRoute: "/posts/:id",
+				privateRoute: "/posts/:id?scope=me",
+				method: "GET",
+				usage: "Returns a single post or post not found",
+			},
+			{
+				name: "create post",
+				globalRoute: "/posts/create",
+				method: "POST",
+				usage: "create post, for persisted creation signin",
+			},
+		],
+		data: {
+			userId: 1,
+			post_image_url: "myimage.com",
+			content: "my post content",
+		},
+	},
+
 	//actors
 	//  {
 	// 	api: "actors",
@@ -175,5 +173,4 @@ export const api = [
 	// 		zipCode: "90028",
 	// 	},
 	// },
-	
 ];
