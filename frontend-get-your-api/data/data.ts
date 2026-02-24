@@ -6,7 +6,7 @@ export const api = [
 			{
 				name: "help",
 				globalRoute: "/users/help",
-				privateRoute: "/users/help?scope=me",
+				// privateRoute: "/users/help?scope=me",
 				method: "GET",
 				usage: "shows all the end points",
 			},
@@ -73,7 +73,7 @@ export const api = [
 			{
 				name: "help",
 				globalRoute: "/posts/help",
-				privateRoute: "/posts/help?scope=me",
+				// privateRoute: "/posts/help?scope=me",
 				method: "GET",
 				usage: "shows all the end points",
 			},

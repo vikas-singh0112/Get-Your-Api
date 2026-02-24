@@ -9,6 +9,7 @@ import { bookRouter } from "./routes/bookRoute";
 import { cleanDatabase } from "./db/dbCleanup";
 import cors from "@elysiajs/cors";
 import cron from "@elysiajs/cron";
+import { contactRouter } from "./routes/contactRoute";
 
 const app = new Elysia();
 
@@ -50,6 +51,9 @@ app
 
 // health
 app.group("/api", (app) => app.use(healthRouter));
+
+// contact
+app.group("/api", (app) => app.use(contactRouter));
 
 // actor
 app.group("/api/actors", (app) => app.use(acotorRouter));

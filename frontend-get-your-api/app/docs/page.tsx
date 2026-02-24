@@ -29,8 +29,6 @@ const DocsPage = () => {
 					{api.map((data, index) => {
 						const isActive = apiData.api === data.api;
 
-
-
 						return (
 							<li
 								key={index}
