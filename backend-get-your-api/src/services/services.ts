@@ -146,6 +146,7 @@ export const todoService = factory({
 	Model: todos,
 	modelName: "todos",
 	idColumn: todos.id,
+	userIdColumn: todos.userId,
 	queryColumn: [todos.title],
 	// unique: todos.title,
 	developerId: todos.developerId,

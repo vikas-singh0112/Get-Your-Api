@@ -10,6 +10,7 @@ import { cleanDatabase } from "./db/dbCleanup";
 import cors from "@elysiajs/cors";
 import cron from "@elysiajs/cron";
 import { contactRouter } from "./routes/contactRoute";
+import { todoRouter } from "./routes/todoRoutes";
 
 const app = new Elysia();
 
@@ -55,6 +56,15 @@ app.group("/api", (app) => app.use(healthRouter));
 // contact
 app.group("/api", (app) => app.use(contactRouter));
 
+// users
+app.group("/api/users", (app) => app.use(userRouter));
+
+// posts
+app.group("/api/posts", (app) => app.use(postRouter));
+
+// todos
+app.group("/api/todos", (app) => app.use(todoRouter));
+
 // actor
 app.group("/api/actors", (app) => app.use(acotorRouter));
 
@@ -63,12 +73,6 @@ app.group("/api/authors", (app) => app.use(authorRouter));
 
 // book
 app.group("/api/books", (app) => app.use(bookRouter));
-
-// users
-app.group("/api/users", (app) => app.use(userRouter));
-
-// posts
-app.group("/api/posts", (app) => app.use(postRouter));
 
 // secure routes
 // app.group("/api/actors", (app) => app.use(auth).use(acotorRouter));

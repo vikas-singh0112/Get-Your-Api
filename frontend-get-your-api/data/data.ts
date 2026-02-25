@@ -112,6 +112,75 @@ export const api = [
 		},
 	},
 
+
+	{
+		api: "todos",
+		routes: [
+			{
+				name: "help",
+				globalRoute: "/todos/help",
+				// privateRoute: "/todos/help?scope=me",
+				method: "GET",
+				usage: "shows all the end points",
+			},
+			{
+				name: "get all todos",
+				globalRoute: "/todos",
+				privateRoute: "/todos?scope=me",
+				method: "GET",
+				usage: "Returns all todos, default limit of 50 todos ",
+			},
+			{
+				name: "get all todos with limit",
+				globalRoute: "/todos?limit=10",
+				privateRoute: "/todos?limit=10&scope=me",
+				method: "GET",
+				usage: "Returns all todos, set limit manually",
+			},
+			{
+				name: "get todos by id",
+				globalRoute: "/todos/:id",
+				privateRoute: "todos/:id?scope=me",
+				method: "GET",
+				usage: "Returns a single todo",
+			},
+			{
+				name: "get todos by user id",
+				globalRoute: "/todos/userid/:id",
+				privateRoute: "/todos/userid/:id?scope=me",
+				method: "GET",
+				usage: "Returns a single todo",
+			},
+			{
+				name: "search todos",
+				globalRoute: "/todos/search?q=adam",
+				privateRoute: "/todos/search?user=adam&scope=me",
+				method: "GET",
+				usage: "Returns an array of todos, default limit 10",
+			},
+			{
+				name: "search todos with limit",
+				globalRoute: "/todos/search?q=adam&limit=10",
+				privateRoute: "/todos/search?user=adam&limit=10&scope=me",
+				method: "GET",
+				usage:
+					"Returns an array of todos or todos not found, change limit manually",
+			},
+			{
+				name: "create todo",
+				globalRoute: "/todos/create",
+				method: "POST",
+				usage: "create user, for persisted creation signin",
+			},
+		],
+		data: {
+			uId: 12,
+			title: "todo title",
+			content: "my todo content",
+			completed: false,
+		},
+	},
+
 	//actors
 	//  {
 	// 	api: "actors",

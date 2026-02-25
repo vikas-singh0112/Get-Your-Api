@@ -48,6 +48,11 @@ export interface ICreateMovieBody {}
 export interface ICreateProductBody {}
 export interface ICreateReviewBody {}
 export interface ICreateShowBody {}
-export interface ICreateTodoBody {}
+export interface ICreateTodoBody {
+	uId: number;
+	title: string;
+	content: string;
+	completed: boolean;
+}
 export interface ICreateTransactionBody {}
 export interface ICreateConversationBody {}

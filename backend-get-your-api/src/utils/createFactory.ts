@@ -10,6 +10,7 @@ import { verifyToken } from "@clerk/backend";
 type Props = {
 	Model: PgTable;
 	idColumn: PgColumn;
+	userIdColumn?: PgColumn;
 	queryColumn?: PgColumn[];
 	// unique?: PgColumn;
 	modelName: string;
@@ -21,6 +22,7 @@ const factory = ({
 	Model,
 	modelName,
 	idColumn,
+	userIdColumn,
 	queryColumn,
 	// unique,
 	developerId,
@@ -71,7 +73,11 @@ const factory = ({
 					throw new ApiError(401, "Invalid token for private scope");
 				}
 			} else {
-				data = await db.select().from(Model).where(eq(isGlobal, true)).limit(limit);
+				data = await db
+					.select()
+					.from(Model)
+					.where(eq(isGlobal, true))
+					.limit(limit);
 			}
 
 			if (!data || data.length === 0) {
@@ -128,6 +134,51 @@ const factory = ({
 			});
 			return response;
 		},
+
+		...(userIdColumn && {
+			getByUserId: async (uId: number, scope: string, authHeader: string) => {
+				let data;
+				if (scope === "me") {
+					if (!authHeader || !authHeader.startsWith("Bearer ")) {
+						throw new ApiError(
+							401,
+							"Authentication required for private scope",
+						);
+					}
+					try {
+						const token = authHeader.replace("Bearer ", "");
+						const { sub: userId } = await verifyToken(token, {
+							secretKey: process.env.CLERK_SECRET_KEY,
+						});
+
+						data = await db
+							.select()
+							.from(Model)
+							.where(and(eq(developerId, userId), eq(userIdColumn, uId)));
+					} catch (error) {
+						throw new ApiError(401, "Invalid token for private scope");
+					}
+				} else {
+					data = await db
+						.select()
+						.from(Model)
+						.where(and(eq(isGlobal, true), eq(userIdColumn, uId)));
+				}
+				if (!data || data.length === 0) {
+					throw new ApiError(404, `${uId} not found`);
+				}
+				const safeData = data.map((item) => {
+					const { developerId, isGlobal, expiresAt, ...rest } = item;
+					return rest;
+				});
+				const response = ApiResponse({
+					data: safeData,
+					message: `${uId} fetched successfully`,
+					statusCode: 200,
+				});
+				return response;
+			},
+		}),
 
 		// search
 		...(queryColumn &&
